@@ -25,6 +25,15 @@ public class ViewPortHandler {
 
     protected float mChartWidth = 0f;
     protected float mChartHeight = 0f;
+    
+    /**
+     * the offsets inside mContentRect
+     */
+    protected float offsetLeft = 0f;
+    protected float offsetTop = 0f;
+    protected float offsetRight = 0f;
+    protected float offsetBottom = 0f;
+
 
     /**
      * minimum scale value on the y-axis
@@ -77,12 +86,27 @@ public class ViewPortHandler {
     private float mTransOffsetY = 0f;
 
     /**
-     * Constructor - don't forget calling setChartDimens(...)
+     * Constructor - don't forget calling setOffsets() and setChartDimens(...)
      */
     public ViewPortHandler() {
 
     }
-
+    
+    /**
+     * Sets the offsets of the chart. The arguments must be set deliberately! that is small proper values
+     *
+     * @param left
+     * @param top
+     * @param right
+     * @param bottom
+     */
+    public void setOffsets(float left, float top, float right, float bottom){
+        this.offsetLeft = left;
+        this.offsetTop = top;
+        this.offsetRight = right;
+        this.offsetBottom = bottom;
+    }
+    
     /**
      * Sets the width and height of the chart.
      *
@@ -90,19 +114,19 @@ public class ViewPortHandler {
      * @param height
      */
 
-    public void setChartDimens(float width, float height) {
+    public void setChartDimens(float width, float height){
 
-        float offsetLeft = this.offsetLeft();
-        float offsetTop = this.offsetTop();
-        float offsetRight = this.offsetRight();
-        float offsetBottom = this.offsetBottom();
-
-        mChartHeight = height;
         mChartWidth = width;
+        mChartHeight = height;
 
-        restrainViewPort(offsetLeft, offsetTop, offsetRight, offsetBottom);
+        mContentRect.set(
+                offsetLeft, offsetTop,
+                mChartWidth - offsetRight, mChartHeight - offsetBottom);
     }
+    
 
+
+    
     public boolean hasChartDimens() {
         if (mChartHeight > 0 && mChartWidth > 0)
             return true;
@@ -110,28 +134,7 @@ public class ViewPortHandler {
             return false;
     }
 
-    public void restrainViewPort(float offsetLeft, float offsetTop, float offsetRight,
-                                 float offsetBottom) {
-        mContentRect.set(offsetLeft, offsetTop, mChartWidth - offsetRight, mChartHeight
-                - offsetBottom);
-    }
-
-    public float offsetLeft() {
-        return mContentRect.left;
-    }
-
-    public float offsetRight() {
-        return mChartWidth - mContentRect.right;
-    }
-
-    public float offsetTop() {
-        return mContentRect.top;
-    }
-
-    public float offsetBottom() {
-        return mChartHeight - mContentRect.bottom;
-    }
-
+    
     public float contentTop() {
         return mContentRect.top;
     }
