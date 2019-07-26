@@ -258,29 +258,36 @@ public abstract class PieRadarChartBase<T extends ChartData<? extends IDataSet<?
      * @param y
      * @return
      */
-    public float getAngleForPoint(float x, float y) {
+    public float getAngleForPoint(float x, float y){
 
-        MPPointF c = getCenterOffsets();
+        //FPoint c = getCenterOffset();
+        FPoint c = getCenterOfCircleBox();
+        float dx = x - c.x;
+        float dy = y - c.y;
+        float teta = 0f;
 
-        double tx = x - c.x, ty = y - c.y;
-        double length = Math.sqrt(tx * tx + ty * ty);
-        double r = Math.acos(ty / length);
+        if( dx > 0 && dy > 0 ){
 
-        float angle = (float) Math.toDegrees(r);
+            teta = (float) Math.atan(dy/dx);
+        }
+        else if( dx < 0 ){
 
-        if (x > c.x)
-            angle = 360f - angle;
+            teta = (float) (Math.atan(dy/dx) + Math.PI);
+        }
+        else if(dx > 0 && dy < 0){
 
-        // add 90° because chart starts EAST
-        angle = angle + 90f;
+            teta = (float) (Math.atan(dy/dx) + 2 * Math.PI);
+        }
 
-        // neutralize overflow
-        if (angle > 360f)
-            angle = angle - 360f;
-
-        MPPointF.recycleInstance(c);
-
-        return angle;
+        return teta;
+    }
+    
+    public MPPointF getCenterOfCircleBox(){
+        if(mCircleBox == null){
+            return null;
+        }else{
+            return MPPointF.getInstance(mCircleBox.centerX(), mCircleBox.centerY());
+        }
     }
 
     /**
